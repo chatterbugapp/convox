@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"os"
 
+	"cloud.google.com/go/logging/logadmin"
 	"cloud.google.com/go/storage"
 	"github.com/convox/convox/pkg/structs"
 	"github.com/convox/convox/pkg/templater"
@@ -18,9 +19,11 @@ type Provider struct {
 
 	Bucket   string
 	Key      []byte
+	Project  string
 	Registry string
 
-	Storage *storage.Client
+	LogAdmin *logadmin.Client
+	Storage  *storage.Client
 
 	templater *templater.Templater
 }
@@ -34,6 +37,7 @@ func FromEnv() (*Provider, error) {
 	p := &Provider{
 		Provider: k,
 		Bucket:   os.Getenv("BUCKET"),
+		Project:  os.Getenv("PROJECT"),
 		Registry: os.Getenv("REGISTRY"),
 	}
 
@@ -74,15 +78,13 @@ func (p *Provider) WithContext(ctx context.Context) structs.Provider {
 func (p *Provider) initializeGcpServices() error {
 	ctx := context.Background()
 
-	// creds, err := google.FindDefaultCredentials(ctx, storage.ScopeReadOnly)
-	// if err != nil {
-	// 	return err
-	// }
+	la, err := logadmin.NewClient(ctx, p.Project)
+	if err != nil {
+		return err
+	}
 
-	// fmt.Printf("creds: %+v\n", creds)
-	// fmt.Printf("creds.TokenSource: %+v\n", creds.TokenSource)
+	p.LogAdmin = la
 
-	// s, err := storage.NewClient(ctx, option.WithCredentials(creds))
 	s, err := storage.NewClient(ctx)
 	if err != nil {
 		return err
