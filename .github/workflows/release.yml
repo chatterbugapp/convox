@@ -5,9 +5,8 @@ on:
     tags: ["*"]
 jobs:
   docker:
-    name: push
     steps:
-    - uses: docker:stable
+    - name: push
       run: |
         docker login docker.pkg.github.com --username convox --password "${GITHUB_TOKEN}"
       env:
