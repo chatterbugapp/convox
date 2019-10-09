@@ -6,8 +6,9 @@ on:
 jobs:
   docker:
     name: push
-    uses: docker:stable
-    run: |
-      docker login docker.pkg.github.com --username convox --password "${GITHUB_TOKEN}"
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: docker:stable
+        run: |
+          docker login docker.pkg.github.com --username convox --password "${GITHUB_TOKEN}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
