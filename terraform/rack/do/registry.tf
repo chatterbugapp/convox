@@ -13,6 +13,7 @@ resource "digitalocean_spaces_bucket" "registry" {
 
 resource "random_string" "secret" {
   length = 30
+  special = false
 }
 
 resource "kubernetes_deployment" "registry" {
@@ -172,4 +173,3 @@ resource "kubernetes_ingress" "registry" {
     }
   }
 }
-
